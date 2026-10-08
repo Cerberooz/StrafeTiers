@@ -1,0 +1,13 @@
+{
+  "name": "strafe-tiers-discord",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22.12.0" },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "start": "node --env-file-if-exists=.env src/bot.js",
+    "register": "node --env-file-if-exists=.env scripts/register.mjs"
+  },
+  "dependencies": { "discord.js": "14.27.0" }
+}

@@ -52,17 +52,14 @@ export function profileEmbed(profile, settings) {
     .setURL(new URL('/tiers', settings.website).href)
     .setThumbnail(portraitUrl(profile))
     .addFields(
-      { name: 'Account', value: account.join(' | ') || 'Not linked' },
-      { name: '\u200B', value: '\u200B\n\u200B' },
+      { name: 'Account', value: `${account.join(' | ') || 'Not linked'}\n\u200B` },
       { name: 'Overall', value: 'Coming Soon!', inline: true },
       { name: 'Points', value: 'Coming Soon!', inline: true },
       { name: 'Region', value: profile.region || solo?.region || team?.region || 'Unavailable', inline: true },
-      { name: '\u200B', value: '\u200B\n\u200B' },
-      { name: '━━ __SMP__ ━━', value: '\u200B' },
+      { name: '\u200B', value: '**SMP**' },
       { name: `${settings.icons.team} Team`, value: standingText(team, profile.currentSeason), inline: true },
       { name: `${settings.icons.solo} Solo`, value: standingText(solo, profile.currentSeason), inline: true },
       { name: '\u200B', value: '\u200B', inline: true },
-      { name: '\u200B', value: '\u200B\n\u200B' },
-      { name: '━━ __PRACTICE__ ━━', value: 'Coming Soon!' }
+      { name: '\u200B', value: '**Practice**\nComing Soon!' }
     ).setFooter({ text: 'StrafeMC.net' });
 }

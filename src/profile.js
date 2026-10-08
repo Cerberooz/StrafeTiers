@@ -53,8 +53,8 @@ export function profileEmbed(profile, settings) {
     .setThumbnail(portraitUrl(profile))
     .addFields(
       { name: 'Account', value: `${account.join(' | ') || 'Not linked'}\n\u200B` },
-      { name: 'Overall', value: 'Coming Soon!', inline: true },
-      { name: 'Points', value: 'Coming Soon!', inline: true },
+      { name: 'Overall', value: 'Coming Soon!\u00A0\u00A0\u00A0\u00A0\u200B', inline: true },
+      { name: 'Points', value: 'Coming Soon!\u00A0\u00A0\u00A0\u00A0\u200B', inline: true },
       { name: 'Region', value: profile.region || solo?.region || team?.region || 'Unavailable', inline: true },
       { name: '\u200B', value: '**SMP**' },
       { name: `${settings.icons.team} Team`, value: standingText(team, profile.currentSeason), inline: true },

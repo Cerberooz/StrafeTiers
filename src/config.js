@@ -35,7 +35,9 @@ export function config() {
   return {
     ...registrationConfig(), apiBase: apiBase.origin, apiKey: required('API_SERVER_API_KEY'), website: website.origin,
     cacheMs: integer('PROFILE_CACHE_SECONDS', 30, 0, 300) * 1000,
-    cooldownMs: integer('USER_COOLDOWN_SECONDS', 3, 1, 60) * 1000,
+    // Existing 3-second configurations automatically adopt the new 5-second minimum.
+    cooldownMs: Math.max(5, integer('USER_COOLDOWN_SECONDS', 5, 1, 60)) * 1000,
+    requestsPerMinute: integer('USER_REQUESTS_PER_MINUTE', 10, 1, 10),
     maximum: integer('MAX_CONCURRENT_LOOKUPS', 8, 1, 32),
     healthPort: integer('HEALTH_PORT', 3000, 1024, 65535),
     icons: { premium: icon('PREMIUM_ICON', '🎮'), discord: icon('DISCORD_ICON', '💬'), team: icon('TEAM_ICON', '🚩'), solo: icon('SOLO_ICON', '⚔️') }

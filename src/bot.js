@@ -8,7 +8,7 @@ import { resolveApplicationIcons } from './emojis.js';
 const settings = config();
 const api = new ProfileClient(settings);
 const client = new Client({ intents: [GatewayIntentBits.Guilds], allowedMentions: { parse: [] } });
-const cooldowns = new Map();
+const rateLimits = new Map();
 let active = 0;
 let stopping = false;
 const log = event => console.log(JSON.stringify({ event, time: new Date().toISOString() }));
@@ -30,15 +30,28 @@ client.on(Events.InteractionCreate, async interaction => {
       await interaction.reply({ content: errors.invalid_name, flags: MessageFlags.Ephemeral }); return;
     }
     const now = Date.now();
-    if ((cooldowns.get(interaction.user.id) || 0) > now) {
-      await interaction.reply({ content: 'Please wait a few seconds before using /tier again.', flags: MessageFlags.Ephemeral }); return;
+    const recent = (rateLimits.get(interaction.user.id) || []).filter(time => time > now - 60_000);
+    const cooldownUntil = recent.length ? recent[recent.length - 1] + settings.cooldownMs : 0;
+    const minuteUntil = recent.length >= settings.requestsPerMinute ? recent[0] + 60_000 : 0;
+    const waitMs = Math.max(cooldownUntil, minuteUntil) - now;
+    if (waitMs > 0) {
+      const seconds = Math.ceil(waitMs / 1000);
+      await interaction.reply({ content: `Please wait ${seconds} second${seconds === 1 ? '' : 's'} before using /tier again.`, flags: MessageFlags.Ephemeral }); return;
     }
     if (stopping || active >= 32) {
       await interaction.reply({ content: errors.busy, flags: MessageFlags.Ephemeral }); return;
     }
-    cooldowns.delete(interaction.user.id);
-    if (cooldowns.size >= 4096) cooldowns.delete(cooldowns.keys().next().value);
-    cooldowns.set(interaction.user.id, now + settings.cooldownMs);
+    if (!rateLimits.has(interaction.user.id) && rateLimits.size >= 4096) {
+      for (const [userId, times] of rateLimits) {
+        if (times[times.length - 1] <= now - 60_000) rateLimits.delete(userId);
+      }
+      // Do not evict active users: that would reset their limits during a burst.
+      if (rateLimits.size >= 4096) {
+        await interaction.reply({ content: errors.busy, flags: MessageFlags.Ephemeral }); return;
+      }
+    }
+    recent.push(now);
+    rateLimits.set(interaction.user.id, recent);
     active++;
     try {
       // Acknowledge immediately; database and portrait work never delay Discord's deadline.

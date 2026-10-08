@@ -7,7 +7,9 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "start": "node --env-file-if-exists=.env src/bot.js",
-    "register": "node --env-file-if-exists=.env scripts/register.mjs"
+    "register": "node --env-file-if-exists=.env scripts/register.mjs",
+    "emojis:prepare": "node scripts/prepare-emojis.mjs"
   },
-  "dependencies": { "discord.js": "14.27.0" }
+  "dependencies": { "discord.js": "14.27.0" },
+  "devDependencies": { "sharp": "^0.35.5" }
 }

@@ -28,7 +28,10 @@ export function config() {
   if (apiBase.protocol !== 'https:' && !local) throw new Error('Use HTTPS for the API outside local development.');
   const website = new URL(process.env.PUBLIC_WEBSITE_URL || 'https://strafemc.net');
   if (website.protocol !== 'https:' || website.username || website.password) throw new Error('PUBLIC_WEBSITE_URL must use HTTPS.');
-  const icon = (name, fallback) => (process.env[name]?.trim() || fallback).slice(0, 80);
+  const icon = (name, fallback) => {
+    const value = process.env[name]?.trim();
+    return (!value || value.toLowerCase() === 'auto' ? fallback : value).slice(0, 80);
+  };
   return {
     ...registrationConfig(), apiBase: apiBase.origin, apiKey: required('API_SERVER_API_KEY'), website: website.origin,
     cacheMs: integer('PROFILE_CACHE_SECONDS', 30, 0, 300) * 1000,

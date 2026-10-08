@@ -3,6 +3,7 @@ import { Client, Events, GatewayIntentBits, MessageFlags } from 'discord.js';
 import { config } from './config.js';
 import { ProfileClient, ProfileError } from './api.js';
 import { profileEmbed } from './profile.js';
+import { resolveApplicationIcons } from './emojis.js';
 
 const settings = config();
 const api = new ProfileClient(settings);
@@ -90,5 +91,11 @@ function shutdown(code = 0) {
 process.once('SIGTERM', () => shutdown());
 process.once('SIGINT', () => shutdown());
 
-try { await client.login(settings.token); }
+try {
+  try {
+    const found = await resolveApplicationIcons(settings);
+    log(found === 4 ? 'application_emojis_loaded' : 'application_emojis_partial_or_overridden');
+  } catch { log('application_emojis_unavailable_using_fallback'); }
+  if (!stopping) await client.login(settings.token);
+}
 catch { log('discord_login_failed'); shutdown(1); }

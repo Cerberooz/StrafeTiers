@@ -54,9 +54,25 @@ The lookup returns public identity flags and season standings only, with no Disc
 ## Discord setup
 
 1. Create an application named **StrafeTiers** in the [Discord Developer Portal](https://discord.com/developers/applications), create its bot, and copy the bot token and application ID.
-2. Enable **Guild Install** with the `bot` and `applications.commands` scopes. Invite it with **Send Messages** and **Embed Links** permissions. No privileged intents, message-content access, member access or administrator permission are required. Leave Interactions Endpoint URL empty: this app handles interactions through the Gateway.
-3. Copy `.env.example` to `.env` and fill `DISCORD_TOKEN`, `DISCORD_APPLICATION_ID`, `API_SERVER_BASE_URL` and `API_SERVER_API_KEY`. Optionally set `DISCORD_GUILD_ID` for a guild-scoped development command; leave it empty for the global command.
-4. The icon settings accept Unicode emoji or custom Discord emoji such as `<:team:123456789012345678>`.
+2. Under **Installation → Installation Contexts**, enable **User Install** and **Guild Install** and save. Choose **Discord Provided Link**. Under **Default Install Settings**, select only `applications.commands` for User Install; select `bot` and `applications.commands` for Guild Install, with **Send Messages** and **Embed Links** permissions. No privileged intents, message-content access, member access or administrator permission are required. Leave Interactions Endpoint URL empty: this app handles interactions through the Gateway.
+3. Copy `.env.example` to `.env` and fill `DISCORD_TOKEN`, `DISCORD_APPLICATION_ID`, `API_SERVER_BASE_URL` and `API_SERVER_API_KEY`. Leave `DISCORD_GUILD_ID` empty for user installation. Setting it registers a guild-only development command instead.
+4. Leave the four icon settings as `auto` to use the application's own website icons. The previous defaults (🎮, 💬, 🚩, ⚔️) also automatically adopt the application emojis. Other Unicode/custom emoji values remain explicit overrides.
+
+After registering and starting the app, share the **Install Link** from the Installation page. Individual players select **Add to My Apps** to install it on their account. Global `/tier` supports user and server installations and can be used in server channels, the bot's DM, and other DMs/group DMs, subject to Discord's permissions. Players do not need to add the bot to a server to install it on their account.
+
+For an existing deployment, enable both installation contexts in the portal first, clear `DISCORD_GUILD_ID` in `.env`, then run the usual build, registration and container replacement commands. Only this bot needs redeploying. Reference: [Discord user-installable apps](https://docs.discord.com/developers/tutorials/developing-a-user-installable-app).
+
+### Application-owned emojis
+
+The registration command now uploads the website's **Team**, **Solo**, **Minecraft grass block**, and **Discord symbol** as application emojis named `strafe_team`, `strafe_solo`, `strafe_minecraft`, and `strafe_discord`. They belong to the StrafeTiers application, so Discord identifies them as emojis “from the StrafeTiers app”, with no emoji-storage server required.
+
+The bundled images in `assets/emojis` are transparent 128×128 PNG conversions of the existing website artwork. To regenerate them after updating the website icons, run `npm run emojis:prepare` locally with development dependencies installed, then commit the generated PNGs. An optional first argument specifies a different website design directory. Deployment uses the bundled PNGs and needs neither the website checkout nor the image conversion library.
+
+Your existing `node scripts/register.mjs` Docker deployment step uploads any missing named emoji and reuses existing IDs on later deployments. It does not replace or delete existing application emojis. The bot resolves their IDs once at startup and uses them automatically in profile embeds. If you deliberately replace an icon, manage that emoji in Developer Portal → your application → Emojis, then restart the bot. If lookup fails, the bot logs a fallback notice and uses ordinary Unicode icons.
+
+You can also upload the four PNGs manually in that Emojis page using the exact names above. The app reads them by name at startup; no manual IDs are required. To override one icon explicitly, set e.g. `TEAM_ICON=<:my_team:123456789012345678>` in `.env`.
+
+Reference: [Discord application-owned emoji](https://docs.discord.com/developers/resources/emoji#application-owned-emoji). Only the bot needs redeploying for this emoji change; no new API migration or website deployment is required.
 
 ## Docker deployment
 

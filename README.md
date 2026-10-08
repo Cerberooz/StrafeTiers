@@ -33,7 +33,7 @@ Coming Soon!
 Strafemc.net
 ```
 
-Discord cannot hyperlink embed footer text. The embed includes a clickable website link in the last field, a `Strafemc.net` footer, and a clickable title. Discord chooses final field spacing and thumbnail placement, especially on mobile.
+The embed includes one plain `StrafeMC.net` footer and a clickable title. Discord chooses final field spacing and thumbnail placement, especially on mobile.
 
 ## API preparation
 

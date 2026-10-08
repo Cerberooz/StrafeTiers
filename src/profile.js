@@ -53,14 +53,16 @@ export function profileEmbed(profile, settings) {
     .setThumbnail(portraitUrl(profile))
     .addFields(
       { name: 'Account', value: account.join(' | ') || 'Not linked' },
+      { name: '\u200B', value: '\u200B\n\u200B' },
       { name: 'Overall', value: 'Coming Soon!', inline: true },
       { name: 'Points', value: 'Coming Soon!', inline: true },
       { name: 'Region', value: profile.region || solo?.region || team?.region || 'Unavailable', inline: true },
-      { name: 'SMP', value: '\u200B' },
+      { name: '\u200B', value: '\u200B\n\u200B' },
+      { name: '━━ __SMP__ ━━', value: '\u200B' },
       { name: `${settings.icons.team} Team`, value: standingText(team, profile.currentSeason), inline: true },
       { name: `${settings.icons.solo} Solo`, value: standingText(solo, profile.currentSeason), inline: true },
       { name: '\u200B', value: '\u200B', inline: true },
-      { name: 'Practice', value: 'Coming Soon!' },
-      { name: '\u200B', value: `[Strafemc.net](${settings.website})` }
-    ).setFooter({ text: 'Strafemc.net' });
+      { name: '\u200B', value: '\u200B\n\u200B' },
+      { name: '━━ __PRACTICE__ ━━', value: 'Coming Soon!' }
+    ).setFooter({ text: 'StrafeMC.net' });
 }

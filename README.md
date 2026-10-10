@@ -2,11 +2,13 @@
 
 One command: `/tier player:<Minecraft username>`. The public embed shows account badges, the player's portrait, region, best SMP Team and Solo seasons, and placeholders for Overall, Points and Practice. No tab switcher.
 
+While connected, the bot displays the custom status **tiers.strafemc.net** beneath its name. This is included in its Gateway presence at login and reconnection. Deploy this bot update with `docker compose up -d --build strafe-tiers`; no environment changes or command registration are required for the status.
+
 ## How standings are selected
 
 - Team and Solo independently select their highest **tier** across all seasons. Ties prefer more points, then better rank, then the current/latest season.
 - Best results in the active season display `(Current)`; older results display the actual season name, such as `(Season 1)`.
-- Tier bands follow the website's S/A/B/C/F population thresholds and minimum one entry per band. Rank is the leaderboard's shared rank when points tie; tier placement uses the entry's position.
+- Tier bands follow the website's S/A/B/C/F population thresholds and minimum one entry per band. With API migration `20261023000000_consistent_leaderboard_ties.sql`, rank and position are unique standings ordered by points descending, then UUID ascending, matching the website and plugin.
 - Team membership comes from explicitly published **season rosters**, never from membership inferred by name or today's team. In StrafeSMPCore, publish/update rosters using `/strafe tiers team push`. If no matching published roster exists, Team displays `Not ranked`.
 - Missing solo results display `Not ranked`. Missing region displays `Unavailable`; this application does not invent a region. Account labels show Premium and/or Discord only when those flags are true. An account with neither displays `Not linked`.
 - Banned tier profiles are hidden. Deleted current teams are excluded; completed seasons retain historical teams, matching the API's existing visibility rules.

@@ -1,5 +1,5 @@
 import { createServer } from 'node:http';
-import { Client, Events, GatewayIntentBits, MessageFlags } from 'discord.js';
+import { ActivityType, Client, Events, GatewayIntentBits, MessageFlags } from 'discord.js';
 import { config } from './config.js';
 import { ProfileClient, ProfileError } from './api.js';
 import { profileEmbed } from './profile.js';
@@ -7,7 +7,14 @@ import { resolveApplicationIcons } from './emojis.js';
 
 const settings = config();
 const api = new ProfileClient(settings);
-const client = new Client({ intents: [GatewayIntentBits.Guilds], allowedMentions: { parse: [] } });
+const client = new Client({
+  intents: [GatewayIntentBits.Guilds],
+  allowedMentions: { parse: [] },
+  presence: {
+    status: 'online',
+    activities: [{ name: 'Custom Status', type: ActivityType.Custom, state: 'tiers.strafemc.net' }]
+  }
+});
 const rateLimits = new Map();
 let active = 0;
 let stopping = false;

@@ -107,3 +107,9 @@ npm start
 The build checks JavaScript syntax. Live Discord registration and API/database behavior require configured credentials and deployment; no automatic tests or migrations run during a Docker build.
 
 References: [Discord embeds](https://docs.discord.com/developers/resources/message#embed-object), [Discord interactions](https://docs.discord.com/developers/interactions/receiving-and-responding), [Skin Render identifiers](https://skinrender.dev/docs/).
+# No-tier responses
+
+Missing profiles and profiles without standings show a compact embed with the player's name, “There are no tiers for this player.”, and a portrait. Premium usernames use their Minecraft portrait. The no-tier embed uses Steve for non-premium players. Missing profiles use an optional public Minecraft Services username lookup with a three-second timeout; if that lookup fails, Steve is used. Results share the existing bounded profile cache and request limits. Strafe API outages still show the temporary-unavailability response.
+
+For a local visual mockup without credentials, run `node scripts/preview-no-tiers.mjs` and open `http://127.0.0.1:5047`. This renders the embed data in a Discord-style layout; actual Discord spacing can differ.
+

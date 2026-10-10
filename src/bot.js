@@ -15,7 +15,6 @@ const log = event => console.log(JSON.stringify({ event, time: new Date().toISOS
 
 const errors = {
   invalid_name: 'Please enter a Minecraft username (letters, numbers, and underscores, up to 16 characters).',
-  not_found: 'No public StrafeTiers profile was found for that player. They may need to join StrafeMC first.',
   ambiguous: 'More than one Minecraft account uses that name. Please contact a StrafeMC administrator.',
   busy: 'StrafeTiers is handling a lot of requests. Please try again shortly.',
   unavailable: 'StrafeTiers is temporarily unavailable. Please try again later.',

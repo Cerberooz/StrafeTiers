@@ -42,6 +42,12 @@ function standingText(row, current) {
 }
 
 export function profileEmbed(profile, settings) {
+  if (profile.notFound || profile.standings.length === 0) {
+    return new EmbedBuilder().setColor(0x74757B)
+      .setTitle(`${escapeMarkdown(profile.playerName)}'s tiers on StrafeTiers`)
+      .setDescription('There are no tiers for this player.')
+      .setThumbnail(portraitUrl(profile.premium ? profile : { ...profile, skin: null }));
+  }
   const team = bestStanding(profile, 'smp-teams');
   const solo = bestStanding(profile, 'smp-solo');
   const account = [];

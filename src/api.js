@@ -71,9 +71,29 @@ export class ProfileClient {
       const response = await fetch(url, { headers: { Authorization: `Bearer ${this.settings.apiKey}` }, signal: AbortSignal.timeout(10_000), redirect: 'error' });
       if (!response.ok) {
         await response.body?.cancel();
-        throw new ProfileError(response.status === 404 ? 'not_found' : response.status === 409 ? 'ambiguous' : response.status === 429 ? 'busy' : 'unavailable');
+        if (response.status === 404) return this.#missingProfile(name);
+        throw new ProfileError(response.status === 409 ? 'ambiguous' : response.status === 429 ? 'busy' : 'unavailable');
       }
       return validate(await limitedJson(response));
     } catch (error) { if (error instanceof ProfileError) throw error; throw new ProfileError('unavailable'); }
+  }
+
+  async #missingProfile(name) {
+    // A missing tier profile can still belong to a premium Minecraft username.
+    // This public lookup deliberately has no Strafe API authorization header.
+    const profile = { playerName: name, premium: false, playerId: null, standings: [], notFound: true };
+    try {
+      const response = await fetch(`https://api.minecraftservices.com/minecraft/profile/lookup/name/${encodeURIComponent(name)}`,
+        { signal: AbortSignal.timeout(3000), redirect: 'error' });
+      if (!response.ok) { await response.body?.cancel(); return profile; }
+      const account = await limitedJson(response);
+      if (/^[a-f0-9]{32}$/i.test(account.id || '') && /^[A-Za-z0-9_]{1,16}$/.test(account.name || '')
+        && account.name.toLowerCase() === name.toLowerCase()) {
+        profile.playerName = account.name;
+        profile.playerId = account.id.replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/, '$1-$2-$3-$4-$5');
+        profile.premium = true;
+      }
+    } catch { /* A failed optional portrait lookup still produces the no-tiers embed with Steve. */ }
+    return profile;
   }
 }
